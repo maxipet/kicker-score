@@ -19,7 +19,8 @@ int request_pause = 100;
 unsigned long last_request = 0;
 
 void setup() {
-  pinMode(pinLight, INPUT);
+  pinMode(2, INPUT);
+  
   Wire.begin();
   Serial.begin(9600);
 }
@@ -29,11 +30,13 @@ void loop() {
   checkSensor();
 
   // Scoring
-  if(light_sensor && millis() - last_score > score_pause) {
+  if(light_sensor) {
     addScore(0);
   }
-
   
+  if(millis() - last_request > request_pause) {
+    sendRequest(); 
+  }
 }
 
 void checkSensor() {
@@ -46,11 +49,10 @@ void checkSensor() {
 
 void sendRequest() {
   Wire.requestFrom(8, 1);
-
     while(Wire.available())
     {
       int res = Wire.read();
-      if(res != NULL) {
+      if(res != 0) {
         processResponse(res);
       }
     }
@@ -58,7 +60,7 @@ void sendRequest() {
 }
 
 void processResponse(int response) {
-  if(response == 1) { // score
+  if(response == 1) {
     addScore(1);
   } else if (response == -1) {
     subScore(1);
@@ -66,11 +68,14 @@ void processResponse(int response) {
 }
 
 void addScore(int team) {
-  score[team] += 1;
-  if(score[team] >= max_score) {
-    endGame(team);
+  if(millis() - last_score > score_pause) {
+    score[team] += 1;
+    Serial.println(String(score[0]) + ":" + String(score[1]));
+    if(score[team] >= max_score) {
+      endGame(team);
+    }
+    last_score = millis();
   }
-  last_score = millis();
 }
 
 void subScore(int team) {
