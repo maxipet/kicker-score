@@ -17,7 +17,7 @@ unsigned long last_score = 0;
 void setup() {
   pinMode(2, INPUT);
   
-  Wire.begin(8);
+  Wire.begin(4);
   Wire.onRequest(requestEvent);
   Wire.onReceive(receiveEvent);
 }
@@ -34,7 +34,7 @@ void loop() {
 
 // Updates the sensor
 void checkSensor() {
-  if(digitalRead(pinLight) == LOW) {
+  if(digitalRead(pinLight) == HIGH) {
     light_sensor = true;
   } else {
     light_sensor = false;
@@ -42,11 +42,12 @@ void checkSensor() {
 }
 
 void requestEvent() {
+  Serial.println("[DEBUG] Request Received!");
   Wire.write(score_status);
   score_status = 0;
 }
 
-void receiveEvent(int size) {
+void receiveEvent(int howMany) {
   while(Wire.available()) {
     int data = Wire.read();
     processData(data);

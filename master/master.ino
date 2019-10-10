@@ -11,7 +11,7 @@ bool light_sensor = false;
 int score[] = {0,0};
 int max_score = 10;
 int score_threshold = 3;
-int score_pause = 3000;
+int score_pause = 1000;
 unsigned long last_score = 0;
 
 // I2C
@@ -35,12 +35,13 @@ void loop() {
   }
   
   if(millis() - last_request > request_pause) {
+    Serial.println("[DEBUG] Request send!");
     sendRequest(); 
   }
 }
 
 void checkSensor() {
-  if(digitalRead(pinLight) == LOW) {
+  if(digitalRead(pinLight) == HIGH) {
     light_sensor = true;
   } else {
     light_sensor = false;
@@ -48,8 +49,9 @@ void checkSensor() {
 }
 
 void sendRequest() {
-  Wire.requestFrom(8, 1);
+  Wire.requestFrom(4, 1);
     while(Wire.available())
+    Serial.println("[DEBUG] Response Received!");
     {
       int res = Wire.read();
       if(res != 0) {
