@@ -16,8 +16,9 @@ unsigned long last_score = 0;
 
 void setup() {
   pinMode(2, INPUT);
+  Serial.begin(9600);
   
-  Wire.begin(4);
+  Wire.begin(8);
   Wire.onRequest(requestEvent);
   Wire.onReceive(receiveEvent);
 }
@@ -42,7 +43,6 @@ void checkSensor() {
 }
 
 void requestEvent() {
-  Serial.println("[DEBUG] Request Received!");
   Wire.write(score_status);
   score_status = 0;
 }

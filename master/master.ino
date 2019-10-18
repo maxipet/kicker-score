@@ -35,7 +35,6 @@ void loop() {
   }
   
   if(millis() - last_request > request_pause) {
-    Serial.println("[DEBUG] Request send!");
     sendRequest(); 
   }
 }
@@ -49,9 +48,8 @@ void checkSensor() {
 }
 
 void sendRequest() {
-  Wire.requestFrom(4, 1);
-    while(Wire.available())
-    Serial.println("[DEBUG] Response Received!");
+  Wire.requestFrom(8, 1);
+    if(Wire.available() > 0)
     {
       int res = Wire.read();
       if(res != 0) {
